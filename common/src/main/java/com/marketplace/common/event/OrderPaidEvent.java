@@ -18,6 +18,7 @@ public record OrderPaidEvent(
         Long orderId,
         Long buyerId,
         Long sellerId,
+        Long productId,
         BigDecimal amount,
         Instant paidAt,
         String paymentId

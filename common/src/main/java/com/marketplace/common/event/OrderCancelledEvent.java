@@ -17,6 +17,7 @@ public record OrderCancelledEvent(
         Long orderId,
         Long buyerId,
         Long sellerId,
+        Long productId,
         Long cancelledBy,
         String reason,
         Instant timestamp

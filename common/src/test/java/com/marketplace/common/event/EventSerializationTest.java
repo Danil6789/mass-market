@@ -132,7 +132,7 @@ class EventSerializationTest {
     void orderPaidRoundTrip() throws Exception {
         Instant ts = Instant.parse("2026-08-24T10:15:30Z");
         OrderPaidEvent original = new OrderPaidEvent(
-                555L, 7L, 5L, new BigDecimal("199.99"), ts, "pay-abc-def");
+                555L, 7L, 5L, 100L, new BigDecimal("199.99"), ts, "pay-abc-def");
 
         String json = objectMapper.writeValueAsString(original);
         assertTrue(json.contains("\"paymentId\":\"pay-abc-def\""), "paymentId should be a string");
@@ -146,7 +146,7 @@ class EventSerializationTest {
     void orderCancelledRoundTrip() throws Exception {
         Instant ts = Instant.parse("2026-08-24T10:15:30Z");
         OrderCancelledEvent original = new OrderCancelledEvent(
-                555L, 7L, 5L, 1L, "buyer changed mind", ts);
+                555L, 7L, 5L, 100L, 1L, "buyer changed mind", ts);
 
         OrderCancelledEvent parsed = roundTrip(original, OrderCancelledEvent.class);
         assertEquals(original, parsed);

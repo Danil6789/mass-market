@@ -12,6 +12,11 @@
           <package value="com.marketplace.product" />
         </packages>
       </persistence-unit>
+      <persistence-unit moduleName="marketplace-platform.order-service.main" name="Default">
+        <packages>
+          <package value="com.marketplace.order" />
+        </packages>
+      </persistence-unit>
     </persistence-units>
   </component>
 </project>

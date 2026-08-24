@@ -1,14 +1,29 @@
 // common/ — shared Java library (events, DTOs, constants). No Spring Boot, no web.
+// This is a plain java-library, so it MUST NOT pull spring-boot-starter-web or any
+// Spring web stack. Other modules (user-service, product-service, etc.) consume
+// it via `implementation project(':common')`.
 plugins {
     id 'java-library'
 }
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
 dependencies {
-    // Phase 2 will add Jackson + validation. For now, minimal.
+    // Jackson is needed to (de)serialize events and DTOs to/from Kafka payloads and
+    // REST responses. Expose it as `api` so consumers inherit it transitively
+    // (otherwise deserialization in consumer services would not compile).
+    // Version is pinned explicitly (managed by Spring Boot BOM in parent, but we
+    // don't apply spring.dependency-management to a pure java-library here).
+    api 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
+
+    // Jackson JSR-310 module for java.time.Instant (de)serialization
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1'
+
+    // Test scope — use junit-jupiter (JUnit 5). Spring Boot BOM does not apply
+    // here, so we declare versions explicitly.
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
 }

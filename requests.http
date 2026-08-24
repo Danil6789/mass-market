@@ -1,0 +1,130 @@
+### Marketplace Platform — примеры запросов для IntelliJ HTTP Client
+###
+### Все запросы идут через api-gateway на :8080 (маршрутизация в /api/*).
+### Поддерживаются {{variable}} и `client.global.set(...)` для переиспользования токенов.
+###
+### Использование:
+###  1. Запустить платформу: docker compose up -d --build
+###  2. Открыть этот файл в IntelliJ IDEA (плагин HTTP Client уже встроен).
+###  3. Запускать запросы по порядку сверху вниз — каждый следующий использует
+###     токен, сохранённый предыдущим (глобальная переменная accessToken).
+
+
+### ============ Variables ============
+
+@host = http://localhost:8080
+@contentType = application/json
+
+
+### ============ 1. Регистрация нового пользователя ============
+### Создаёт учётную запись и возвращает пару JWT-токенов.
+### accessToken сохраняется в глобальную переменную для следующих запросов.
+POST {{host}}/api/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "alice@example.com",
+  "password": "P@ssw0rd!",
+  "name": "Alice"
+}
+
+> {% client.global.set("accessToken", response.body.accessToken); %}
+
+
+### ============ 2. Вход ============
+### Тот же email/пароль — проверяем, что токены выпускаются повторно.
+POST {{host}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "alice@example.com",
+  "password": "P@ssw0rd!"
+}
+
+> {% client.global.set("accessToken", response.body.accessToken); %}
+
+
+### ============ 3. Получить свой профиль ============
+### Защищённый эндпоинт — нужен Bearer-токен из шага 1/2.
+GET {{host}}/api/users/me
+Authorization: Bearer {{accessToken}}
+
+
+### ============ 4. Создать категорию (ADMIN) ============
+### Для этого запроса нужен токен администратора (вручную подставьте свой
+### adminAccessToken или зарегистрируйте пользователя и повысьте роль в БД).
+POST {{host}}/api/categories
+Content-Type: {{contentType}}
+Authorization: Bearer {{adminAccessToken}}
+
+{
+  "name": "Watches"
+}
+
+> {% client.global.set("categoryId", response.body.id); %}
+
+
+### ============ 5. Создать товар ============
+### sellerId берётся из JWT-principal, в теле — только categoryId/title/price.
+POST {{host}}/api/products
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "categoryId": {{categoryId}},
+  "title": "Vintage Watch",
+  "description": "1962 Omega Seamaster",
+  "price": 199.99
+}
+
+> {% client.global.set("productId", response.body.id); %}
+
+
+### ============ 6. Список товаров (публичный) ============
+GET {{host}}/api/products?page=0&size=20
+
+
+### ============ 7. Получить товар по id ============
+GET {{host}}/api/products/{{productId}}
+
+
+### ============ 8. Создать заказ ============
+### Запускает сагу: резервирует продукт (product-service) и публикует
+### OrderCreatedEvent в Kafka.
+POST {{host}}/api/orders
+Content-Type: {{contentType}}
+Authorization: Bearer {{accessToken}}
+
+{
+  "productId": {{productId}}
+}
+
+> {% client.global.set("orderId", response.body.id); %}
+
+
+### ============ 9. Оплатить заказ ============
+### Mock-платеж — успех/неудача определяется PAYMENT_SUCCESS_RATE (default 0.95).
+POST {{host}}/api/orders/{{orderId}}/pay
+Authorization: Bearer {{accessToken}}
+
+
+### ============ 10. История переходов заказа ============
+GET {{host}}/api/orders/{{orderId}}/history
+Authorization: Bearer {{accessToken}}
+
+
+### ============ 11. Админ: заблокировать пользователя ============
+### Возвращает 202 — фактическая деактивация выполняется асинхронно
+### через Kafka (user-service консьюмит user.blocked).
+POST {{host}}/api/admin/users/2/block
+Content-Type: {{contentType}}
+Authorization: Bearer {{adminAccessToken}}
+
+{
+  "reason": "spam"
+}
+
+
+### ============ 12. Админ: журнал аудита ============
+GET {{host}}/api/admin/audit?page=0&size=20
+Authorization: Bearer {{adminAccessToken}}

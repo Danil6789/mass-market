@@ -6,6 +6,13 @@ plugins {
     id 'java-library'
 }
 
+// The parent build.gradle applies the `org.springframework.boot` plugin to every
+// subproject, which adds a `bootJar` task. common has no main class — disable
+// `bootJar` so `./gradlew clean build` succeeds without configuring a main class.
+tasks.named('bootJar').configure {
+    enabled = false
+}
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)

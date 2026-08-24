@@ -15,8 +15,23 @@ dependencies {
     implementation libs.spring.boot.starter.mail
     implementation libs.spring.boot.starter.thymeleaf
     implementation libs.spring.cloud.starter.netflix.eureka.client
+    implementation libs.spring.cloud.starter.openfeign
     implementation libs.spring.kafka
     implementation libs.springdoc.openapi.starter.webmvc.ui
+    implementation libs.resilience4j.spring.boot3
+
+    // Tracing (Micrometer + Zipkin) — required by autoconfig when management.tracing.* is set.
+    implementation libs.micrometer.tracing.bridge.brave
+    implementation libs.zipkin.reporter.brave
+
+    // OGNL is required by Thymeleaf's StandardDialect when processing inline
+    // expressions outside a Spring context (e.g. our TemplateRenderer unit
+    // tests). spring-boot-starter-thymeleaf transitively references it but
+    // doesn't pin the version, so we declare it explicitly here.
+    implementation 'ognl:ognl:3.3.4'
+
+    // Tests
+    testImplementation libs.spring.boot.starter.test
 }
 
 bootJar {

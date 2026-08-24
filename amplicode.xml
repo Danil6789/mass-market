@@ -17,6 +17,11 @@
           <package value="com.marketplace.order" />
         </packages>
       </persistence-unit>
+      <persistence-unit moduleName="marketplace-platform.notification-service.main" name="Default">
+        <packages>
+          <package value="com.marketplace.notification" />
+        </packages>
+      </persistence-unit>
     </persistence-units>
   </component>
 </project>

@@ -1,0 +1,15 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    com.marketplace.notification: DEBUG
+    org.hibernate.SQL: DEBUG
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0

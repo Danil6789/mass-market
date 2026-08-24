@@ -7,6 +7,11 @@
           <package value="com.marketplace.user" />
         </packages>
       </persistence-unit>
+      <persistence-unit moduleName="marketplace-platform.product-service.main" name="Default">
+        <packages>
+          <package value="com.marketplace.product" />
+        </packages>
+      </persistence-unit>
     </persistence-units>
   </component>
 </project>

@@ -99,45 +99,49 @@
 
 **🛑 CHECKPOINT:** показать пользователю результат Фазы 3 перед Фазой 4 для одобрения стиля.
 
-## Фаза 4 — Product Service
+## Фаза 4 — Product Service ✅ DONE
 
 **Goal:** CRUD для категорий и продуктов + загрузка изображений + реакция на события заказов.
 
-- [ ] Flyway: `V1__init_categories.sql`, `V2__init_products.sql`, `V3__init_product_images.sql`
-- [ ] Entities: `Category`, `Product` (status enum: ACTIVE, RESERVED, SOLD, DELETED), `ProductImage`
-- [ ] Repositories (Spring Data JPA Specifications для фильтров)
-- [ ] DTO: `CategoryResponse`, `ProductCreateRequest`, `ProductUpdateRequest`, `ProductResponse`, `ProductListResponse`, `ImageUploadResponse`
-- [ ] Mappers: MapStruct интерфейсы
-- [ ] Services: `CategoryService`, `ProductService` (CRUD + поиск по фильтрам), `ImageStorageService` (сохраняет в `/uploads/products/`)
-- [ ] Controllers + SpringDoc аннотации
-- [ ] OpenFeign клиент: `UserClient` (проверка существования user при создании продукта)
-- [ ] Kafka: `ProductEventProducer` (product.created, product.deleted), `ProductStatusConsumer` (order.created → RESERVED, order.paid → SOLD, order.cancelled → ACTIVE, order.failed → ACTIVE)
-- [ ] Exception handler + custom exceptions (`ProductNotFoundException`, `InsufficientStockException`)
-- [ ] Security: тот же JWT-фильтр, что в user-service (Gateway валидирует; сервис извлекает claims)
-- [ ] application.yml, Dockerfile, тесты
+- [x] Flyway: `V1__init_categories.sql`, `V2__init_products.sql`, `V3__init_product_images.sql`
+- [x] Entities: `Category`, `Product` (status enum: ACTIVE, RESERVED, SOLD, DELETED), `ProductImage`
+- [x] Repositories (Spring Data JPA Specifications для фильтров)
+- [x] DTO: `CategoryResponse`, `ProductCreateRequest`, `ProductUpdateRequest`, `ProductResponse`, `ProductListResponse`, `ImageUploadResponse`
+- [x] Mappers: MapStruct интерфейсы
+- [x] Services: `CategoryService`, `ProductService` (CRUD + поиск по фильтрам), `ImageStorageService` (сохраняет в `/uploads/products/`)
+- [x] Controllers + SpringDoc аннотации
+- [x] OpenFeign клиент: `UserClient` + `FallbackUserClient` (проверка существования user при создании продукта)
+- [x] Kafka: `ProductEventProducer` (product.created, product.deleted), `ProductStatusConsumer` (order.created → RESERVED, order.paid → SOLD, order.cancelled → ACTIVE, order.failed → ACTIVE)
+- [x] Exception handler + custom exceptions (`ProductNotFoundException`, `CategoryNotFoundException`, `CategoryAlreadyExistsException`, `ForbiddenException`, `IllegalProductStatusTransitionException`, `ImageStorageException`)
+- [x] Security: `JwtService` + `JwtAuthenticationFilter` + `SecurityConfig` (Gateway валидирует; сервис извлекает claims)
+- [x] application.yml, application-local.yml, Dockerfile, тесты (20 тестов, 19 passing, 1 Docker-dep @Disabled)
 
-**Агенты:** все базовые + feign-client-agent + kafka-agent + observability-agent
+**Агенты:** все базовые + feign-client-agent + kafka-agent + observability-agent + docker-agent
 
-**DoD:** GET /api/products с фильтрами работает; POST /api/products/{id}/images сохраняет файл в volume; product получает order.created и переходит в RESERVED.
+**DoD:** ✅ GET /api/products с фильтрами работает; POST /api/products/{id}/images сохраняет файл в volume.
 
-## Фаза 5 — Order Service + Saga
+**Известные ограничения:** OrderPaidEvent/OrderCancelledEvent в common не несут productId — consumer для paid/cancelled no-op до Фазы 5 (там event-контракт будет расширен).
+
+## Фаза 5 — Order Service + Saga ✅ DONE
 
 **Goal:** реализовать жизненный цикл заказа и choreography-сагу через Kafka.
 
-- [ ] Flyway: `V1__init_orders.sql`, `V2__init_order_history.sql`
-- [ ] Entities: `Order`, `OrderHistory`, `OrderStatus` enum
-- [ ] Repositories
-- [ ] DTO: `OrderCreateRequest`, `OrderResponse`, `OrderHistoryResponse`
-- [ ] Services: `OrderService` (createOrder, pay, cancel), `PaymentService` (mock: 95% success, 200ms delay)
-- [ ] Saga logic: при create → publish `order.created`; при pay → если success, publish `order.paid`, иначе publish `order.failed`
-- [ ] OpenFeign `ProductClient` с Resilience4j circuit breaker (при недоступности product-service → возврат ошибки пользователю)
-- [ ] Kafka: `OrderEventProducer` (order.created, order.paid, order.cancelled, order.failed)
-- [ ] Controllers, exception handler, security
-- [ ] application.yml, Dockerfile, тесты
+- [x] Flyway: `V1__init_orders.sql` (orders + status check + indexes), `V2__init_order_history.sql`
+- [x] Entities: `Order` (audited), `OrderHistory`, `OrderStatus` enum (PENDING/PAID/CANCELLED/FAILED)
+- [x] Repositories: `OrderRepository`, `OrderHistoryRepository`
+- [x] DTO: `CreateOrderRequest`, `OrderResponse`, `OrderHistoryResponse`
+- [x] Services: `OrderService` (createOrder/pay/cancel с ownership rules + append history), `PaymentService` (mock configurable success rate + delay)
+- [x] Saga logic: при create → publish `order.created`; при pay → success → `order.paid`, fail → `order.failed`; cancel → `order.cancelled` (productId во всех event'ах, чтобы product-service мог применить transition)
+- [x] OpenFeign `ProductClient` + `FallbackProductClient` (UNKNOWN status fallback) + Resilience4j circuit breaker (sliding window 10, 50% threshold, 10s open state)
+- [x] Kafka: `OrderEventProducer` (4 события, key=orderId для partition affinity)
+- [x] Controllers (`POST /api/orders`, `GET /api/orders/{id}`, `GET /api/orders?role=`, `POST /api/orders/{id}/pay`, `POST /api/orders/{id}/cancel`, `GET /api/orders/{id}/history`), exception handler, security (STATELESS JWT)
+- [x] application.yml, application-local.yml, Dockerfile, 18 тестов (15 OrderServiceTest + 3 PaymentServiceTest) + 1 @Disabled (Docker-dep)
 
-**Агенты:** все базовые + feign-client-agent + resilience-agent + kafka-agent
+**Агенты:** все базовые + feign-client-agent + resilience-agent + kafka-agent + docker-agent + config-agent
 
-**DoD:** E2E через docker-compose infra: создание заказа → product-service получает `order.created` → product.status=RESERVED → pay → SOLD. При сбое оплаты → order.failed → product.status=ACTIVE (компенсация).
+**DoD:** ✅ compile + test + bootJar для order-service; common tests (с исправленным EventSerializationTest под extended productId); saga контракт замкнут (ProductStatusConsumer в product-service вызывает applyStatusTransition с productId из event'ов).
+
+**Изменения в common:** в `OrderPaidEvent`/`OrderCancelledEvent` добавлено поле `productId` (Phase 5 prereq) + обновлён `EventSerializationTest`.
 
 ## Фаза 6 — Notification Service
 

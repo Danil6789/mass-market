@@ -127,15 +127,15 @@ C:\Spring\MassMarket\
 
 ## Что осталось (статус)
 
-- ☑ Фаза 0 — Подготовка (создание агентов ✅, CLAUDE.md/plan.md — in progress)
-- ☐ Фаза 1 — Инфраструктура (Gradle multi-project, eureka, gateway, docker-compose.infra)
-- ☐ Фаза 2 — Common модуль (events, DTO, constants)
-- ☐ Фаза 3 — User Service (**CHECKPOINT** — показать пользователю)
-- ☐ Фаза 4 — Product Service
-- ☐ Фаза 5 — Order Service + saga
+- ☑ Фаза 0 — Подготовка
+- ☑ Фаза 1 — Инфраструктура (Gradle multi-project, eureka, gateway, docker-compose.infra)
+- ☑ Фаза 2 — Common модуль (events, DTO, constants)
+- ☑ Фаза 3 — User Service (**CHECKPOINT пройден** ✅)
+- ☑ Фаза 4 — Product Service (CRUD + фильтры JpaSpecificationExecutor + image upload + OpenFeign UserClient + Kafka producer/consumer)
+- ☑ Фаза 5 — Order Service + saga (Resilience4j circuit breaker на order→product, mock payment, choreography 4 events)
 - ☐ Фаза 6 — Notification Service
 - ☐ Фаза 7 — Admin Service
-- ☐ Фаза 8 — Кросс-сервисные настройки (OpenAPI, Zipkin, docker-compose)
+- ☐ Фаза 8 — Кросс-сервисные настройки (OpenAPI aggregation, Zipkin full wiring, docker-compose all services)
 - ☐ Фаза 9 — Качество (Testcontainers, README, .http, e2e)
 
 ## Frontend

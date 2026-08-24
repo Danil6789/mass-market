@@ -135,7 +135,7 @@ C:\Spring\MassMarket\
 - ☑ Фаза 5 — Order Service + saga (Resilience4j circuit breaker на order→product, mock payment, choreography 4 events)
 - ☑ Фаза 6 — Notification Service (Kafka consumers 4 топиков, Thymeleaf inline templates, JavaMailSender, MailHog, EmailLog, OpenFeign UserClient)
 - ☑ Фаза 7 — Admin Service (модерация + audit_log, OpenFeign User/ProductClient, Kafka producer/consumer, @PreAuthorize ADMIN)
-- ☐ Фаза 8 — Кросс-сервисные настройки (OpenAPI aggregation, Zipkin full wiring, docker-compose all services)
+- ☑ Фаза 8 — Кросс-сервисные настройки (docker-compose.yml full stack 15 сервисов, eureka+gateway Dockerfile, OpenAPI aggregation, admin-service Zipkin deps)
 - ☐ Фаза 9 — Качество (Testcontainers, README, .http, e2e)
 
 ## Frontend

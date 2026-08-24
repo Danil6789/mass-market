@@ -27,8 +27,13 @@ springdoc-openapi = "2.3.0"
 # Tracing / Observability
 micrometer-tracing = "1.2.5"
 
+# Note: zipkin-reporter-brave version is managed by the spring-boot-dependencies
+# BOM (2.16.3 in Boot 3.2.5). The libraries below do NOT pin a version — Gradle
+# resolves them through the BOM imported in the parent build.gradle.
+
 # Test
 testcontainers = "1.19.7"
+spring-boot-testcontainers = "3.2.5"
 
 # Plugins
 spring-boot-plugin = "3.2.5"
@@ -83,13 +88,14 @@ springdoc-openapi-starter-webflux-ui = { module = "org.springdoc:springdoc-opena
 
 # Tracing / Observability
 micrometer-tracing-bridge-brave = { module = "io.micrometer:micrometer-tracing-bridge-brave", version.ref = "micrometer-tracing" }
-zipkin-reporter-brave = { module = "io.zipkin.reporter2:zipkin-reporter-brave", version.ref = "micrometer-tracing" }
+zipkin-reporter-brave = { module = "io.zipkin.reporter2:zipkin-reporter-brave" }  # version managed by Spring Boot BOM
 
 # Testcontainers BOM and modules
 testcontainers-bom = { module = "org.testcontainers:testcontainers-bom", version.ref = "testcontainers" }
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 testcontainers-kafka = { module = "org.testcontainers:kafka", version.ref = "testcontainers" }
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+spring-boot-testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers", version.ref = "spring-boot-testcontainers" }
 
 
 [bundles]

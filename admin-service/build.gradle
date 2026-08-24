@@ -1,0 +1,24 @@
+// admin-service — Spring Boot application, web + jpa + security + kafka + eureka-client
+plugins {
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
+}
+
+dependencies {
+    implementation project(':common')
+
+    implementation libs.spring.boot.starter.web
+    implementation libs.spring.boot.starter.data.jpa
+    implementation libs.spring.boot.starter.security
+    implementation libs.spring.boot.starter.actuator
+    implementation libs.spring.boot.starter.validation
+    implementation libs.spring.cloud.starter.netflix.eureka.client
+    implementation libs.spring.cloud.starter.openfeign
+    implementation libs.spring.kafka
+    implementation libs.springdoc.openapi.starter.webmvc.ui
+    implementation libs.resilience4j.spring.boot3
+}
+
+bootJar {
+    archiveFileName = 'admin-service.jar'
+}

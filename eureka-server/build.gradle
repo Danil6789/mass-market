@@ -1,0 +1,14 @@
+// eureka-server — Spring Boot + Eureka Server, port 8761
+plugins {
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
+}
+
+dependencies {
+    implementation libs.spring.cloud.starter.netflix.eureka.server
+    implementation libs.spring.boot.starter.actuator
+}
+
+bootJar {
+    archiveFileName = 'eureka-server.jar'
+}

@@ -1,1 +1,15 @@
-rootProject.name = 'MassMarket'
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+rootProject.name = 'marketplace-platform'
+include 'common'
+include 'eureka-server'
+include 'api-gateway'
+include 'user-service'
+include 'product-service'
+include 'order-service'
+include 'notification-service'
+include 'admin-service'

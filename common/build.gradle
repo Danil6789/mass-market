@@ -1,0 +1,14 @@
+// common/ — shared Java library (events, DTOs, constants). No Spring Boot, no web.
+plugins {
+    id 'java-library'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+dependencies {
+    // Phase 2 will add Jackson + validation. For now, minimal.
+}

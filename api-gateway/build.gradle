@@ -1,0 +1,16 @@
+// api-gateway — Spring Cloud Gateway + Eureka client + springdoc (webflux reactive, no JPA/security yet)
+plugins {
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
+}
+
+dependencies {
+    implementation libs.spring.cloud.starter.gateway
+    implementation libs.spring.cloud.starter.netflix.eureka.client
+    implementation libs.spring.boot.starter.actuator
+    implementation libs.springdoc.openapi.starter.webflux.ui
+}
+
+bootJar {
+    archiveFileName = 'api-gateway.jar'
+}

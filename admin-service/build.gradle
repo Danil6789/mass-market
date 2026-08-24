@@ -17,6 +17,9 @@ dependencies {
     implementation libs.spring.kafka
     implementation libs.springdoc.openapi.starter.webmvc.ui
     implementation libs.resilience4j.spring.boot3
+
+    // Tests
+    testImplementation libs.spring.boot.starter.test
 }
 
 bootJar {

@@ -55,13 +55,13 @@ management:
 springdoc:
   swagger-ui:
     urls:
-      - url: /v3/api-docs/user
+      - url: http://localhost:8081/v3/api-docs
         name: user-service
-      - url: /v3/api-docs/product
+      - url: http://localhost:8082/v3/api-docs
         name: product-service
-      - url: /v3/api-docs/order
+      - url: http://localhost:8083/v3/api-docs
         name: order-service
-      - url: /v3/api-docs/admin
-        name: admin-service
-      - url: /v3/api-docs/notification
+      - url: http://localhost:8084/v3/api-docs
         name: notification-service
+      - url: http://localhost:8085/v3/api-docs
+        name: admin-service

@@ -18,6 +18,11 @@ dependencies {
     implementation libs.springdoc.openapi.starter.webmvc.ui
     implementation libs.resilience4j.spring.boot3
 
+    // Tracing (Micrometer + Zipkin) — optional for runtime, but needed by
+    // Spring Boot autoconfig when management.tracing.* is set.
+    implementation libs.micrometer.tracing.bridge.brave
+    implementation libs.zipkin.reporter.brave
+
     // Tests
     testImplementation libs.spring.boot.starter.test
 }

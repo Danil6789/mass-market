@@ -42,6 +42,7 @@ subprojects {
 
         // MapStruct
         implementation libs.mapstruct
+        annotationProcessor libs.mapstruct.processor
         annotationProcessor libs.lombok.mapstruct.binding
 
         // JJWT

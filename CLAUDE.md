@@ -17,8 +17,6 @@
 - **API docs:** Swagger UI в каждом сервисе на `/swagger-ui/index.html`.
 - **День 1 ✅ (20 агентов созданы), День 2 — in progress (CLAUDE.md, plan.md)** — см. checklist ниже.
 
-## Стек
-
 | Компонент | Версия |
 |---|---|
 | Java | 17 |

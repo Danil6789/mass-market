@@ -11,8 +11,11 @@ FROM gradle:8.10-jdk21-alpine AS build
 
 WORKDIR /app
 
-# Copy build configuration first to leverage Docker layer caching
-COPY settings.gradle build.gradle gradle/ ./
+# Copy build configuration explicitly (Docker on Windows quirk: COPY gradle/
+# does not pick up the version-catalog TOML — must enumerate files).
+COPY settings.gradle build.gradle ./
+COPY gradle/libs.versions.toml gradle/
+COPY gradle/wrapper/ gradle/wrapper/
 COPY api-gateway/ api-gateway/
 
 RUN gradle :api-gateway:bootJar --no-daemon -x test

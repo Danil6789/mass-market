@@ -41,3 +41,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Runtime artifacts (PIDs, logs, playwright cache, frontend screenshots)
+.pids/
+.playwright-mcp/
+logs/
+frontend-*.png

@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(
         name = "product-service",
         url = "${app.clients.product-service:http://localhost:8082}",
-        fallbackFactory = FallbackProductClient.class
+        fallbackFactory = FallbackProductClient.class,
+        configuration = FeignAuthConfig.class
 )
 public interface ProductClient {
 

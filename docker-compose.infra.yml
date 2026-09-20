@@ -117,10 +117,12 @@ services:
       KAFKA_NODE_ID: 0
       KAFKA_PROCESS_ROLES: controller,broker
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
-      # Advertise two listeners: external (host) and internal (docker network).
-      # Services inside docker network reach broker via kafka:9092.
-      # Host-side tools (e.g. kafka-console-producer) reach it via localhost:9092.
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      # Advertise as localhost:9092 so host-side Spring Boot services (the
+      # current pattern — see .pids/ from previous session) can connect via
+      # their default ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}. If we later
+      # run services via docker-compose up, switch to a dual-listener setup
+      # (PLAINTEXT + PLAINTEXT_HOST on a separate port).
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT

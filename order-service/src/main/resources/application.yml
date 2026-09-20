@@ -38,17 +38,20 @@ spring:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
       group-id: order-service-group
-      auto-offset-reset: earliest
+      auto-offset-reset: latest
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       properties:
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
         spring.json.trusted.packages: "com.marketplace.common.event"
-        spring.json.use.type.headers: false
-        spring.json.value.default.type: com.marketplace.common.event.OrderCreatedEvent
+        spring.json.use.type.headers: true
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       acks: all
       properties:
-        spring.json.add.type.headers: false
+        spring.json.add.type.headers: true
     listener:
       ack-mode: manual
       missing-topics-fatal: false
